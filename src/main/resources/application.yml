@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: Patient Care
+  elasticsearch:
+    rest:
+      uris: http://localhost:9200
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+aidbox:
+  base-url: https://makeenpatientcare.aidbox.app
+  fhir:
+    patient-endpoint: /fhir/Patient
+  auth:
+    endpoint: /auth/token
+    clientId: makeen
+    clientSecret: password
+
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
