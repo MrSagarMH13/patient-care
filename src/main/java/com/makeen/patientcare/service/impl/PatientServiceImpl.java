@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -30,11 +32,11 @@ public class PatientServiceImpl implements IPatientService {
     @Override
     public PatientDTO updatePatient(String id, PatientDTO patientDTO) {
         log.info("Updating patient with id: {}", id);
-        return aidboxClient.createPatient(patientDTO);
+        return aidboxClient.updatePatient(id, patientDTO);
     }
 
     @Override
-    public Void deletePatient(String id) {
+    public PatientDTO deletePatient(String id) {
         log.info("Deleting patient with id: {}", id);
         return aidboxClient.deletePatient(id);
     }

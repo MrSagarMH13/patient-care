@@ -89,4 +89,13 @@ public class PatientController {
             HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDTO<PatientDTO>> deletePatient(@PathVariable String id) {
+        log.info("Request to get patient with id: {}", id);
+        PatientDTO patientResponse = patientService.deletePatient(id);
+        return new ResponseEntity<>(
+            new ResponseDTO<>(HttpStatus.OK.value(), "Patient deleted successfully", patientResponse),
+            HttpStatus.OK);
+    }
+
 }

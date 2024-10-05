@@ -2,6 +2,8 @@ package com.makeen.patientcare.service;
 
 import com.makeen.patientcare.dto.PatientDTO;
 
+import java.io.IOException;
+
 public interface IPatientService {
     PatientDTO upsertPatient(PatientDTO patientDTO);
 
@@ -9,5 +11,5 @@ public interface IPatientService {
 
     PatientDTO updatePatient(String id, PatientDTO patientDTO);
 
-    Void deletePatient(String id);
+    PatientDTO deletePatient(String id);
 }
