@@ -7,5 +7,9 @@ import java.util.List;
 public interface ISearchService {
     void upsertPatient(PatientDTO patientDTO);
 
+    void deletePatient(String patientId);
+
+    List<PatientDTO> searchPatientByName();
+
     List<PatientDTO> searchPatientByName(String name);
 }

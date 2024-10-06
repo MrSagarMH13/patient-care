@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/patients")
 @RequiredArgsConstructor
@@ -69,7 +70,28 @@ public class PatientController {
             HttpStatus.OK);
     }
 
+    // Get all patients
+    @Operation(summary = "Get all patients", description = "Fetches all patients from the database")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patients fetched successfully"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/all")
+    public ResponseEntity<ResponseDTO<List<PatientDTO>>> getAllPatients() {
+        log.info("Request to get all patients");
+        List<PatientDTO> patients = searchService.searchPatientByName(); //Assuming having a method that fetches all patients
+        return new ResponseEntity<>(
+            new ResponseDTO<>(HttpStatus.OK.value(), "Patients fetched successfully", patients),
+            HttpStatus.OK);
+    }
+
     // Get patient by ID
+    @Operation(summary = "Retrieve a patient", description = "Get a patient by their ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patient fetched successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid Patient ID provided"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<PatientDTO>> getPatient(@PathVariable String id) {
         log.info("Request to get patient with id: {}", id);
@@ -79,20 +101,41 @@ public class PatientController {
             HttpStatus.OK);
     }
 
+
     // Update patient by ID
+    @Operation(summary = "Update a patient", description = "Update the details of a patient by their ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patient updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid Patient ID or request body provided"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO<PatientDTO>> updatePatient(@PathVariable String id, @RequestBody PatientDTO patientDTO) {
         log.info("Request to update patient with id: {}", id);
+
         PatientDTO patientResponse = patientService.updatePatient(id, patientDTO);
+
+        searchService.upsertPatient(patientResponse);
+        log.info("Patient upserted into Search Service.");
         return new ResponseEntity<>(
             new ResponseDTO<>(HttpStatus.OK.value(), "Patient updated successfully", patientResponse),
             HttpStatus.OK);
     }
 
+    // Delete patient by ID
+    @Operation(summary = "Delete a patient", description = "Delete a patient by their ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patient deleted successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid Patient ID provided"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<PatientDTO>> deletePatient(@PathVariable String id) {
         log.info("Request to get patient with id: {}", id);
         PatientDTO patientResponse = patientService.deletePatient(id);
+
+        searchService.deletePatient(patientResponse.getId());
+        log.info("Patient deleted from Search Service.");
         return new ResponseEntity<>(
             new ResponseDTO<>(HttpStatus.OK.value(), "Patient deleted successfully", patientResponse),
             HttpStatus.OK);
